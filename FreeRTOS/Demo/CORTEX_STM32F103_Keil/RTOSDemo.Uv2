@@ -36,17 +36,19 @@ File 3,1,<..\..\Source\list.c><list.c>
 File 3,1,<..\..\Source\queue.c><queue.c>
 File 3,1,<..\..\Source\portable\RVDS\ARM_CM3\port.c><port.c>
 File 3,1,<..\..\Source\portable\MemMang\heap_2.c><heap_2.c>
+File 3,1,<.\FreeRTOS_CLI.c><FreeRTOS_CLI.c>
+File 3,1,<.\UARTCommandConsole.c><UARTCommandConsole.c>
 
 
 Options 1,0,0  // Target 'Target 1'
- Device (STM32F103VB)
+ Device (STM32F103C8)
  Vendor (STMicroelectronics)
- Cpu (IRAM(0x20000000-0x20004FFF) IROM(0x8000000-0x801FFFF) CLOCK(8000000) CPUTYPE("Cortex-M3"))
+ Cpu (IRAM(0x20000000-0x20004FFF) IROM(0x8000000-0x800FFFF) CLOCK(8000000) CPUTYPE("Cortex-M3"))
  FlashUt ()
- StupF ("STARTUP\ST\STM32F10x.s" ("STM32 Startup Code"))
- FlashDR (UL2CM3(-O14 -S0 -C0 -N00("ARM Cortex-M3") -D00(1BA00477) -L00(4) -FO7 -FD20000000 -FC800 -FN1 -FF0STM32F10x_128 -FS08000000 -FL020000))
- DevID (4223)
- Rgf (stm32f10x_lib.h)
+ StupF ("STARTUP\ST\STM32F10x\startup_stm32f10x_md.s" ("STM32 Medium Density Line Startup Code"))
+ FlashDR (UL2CM3(-O14 -S0 -C0 -N00("ARM Cortex-M3") -D00(1BA00477) -L00(4) -FO7 -FD20000000 -FC800 -FN1 -FF0STM32F10x_128 -FS08000000 -FL010000))
+ DevID (4235)
+ Rgf (stm32f10x.h)
  Mem ()
  C ()
  A ()
@@ -60,8 +62,8 @@ Options 1,0,0  // Target 'Target 1'
  EnvBin ()
  EnvInc ()
  EnvLib ()
- EnvReg (ÿST\STM32F10x\)
- OrgReg (ÿST\STM32F10x\)
+ EnvReg (ST\STM32F10x\)
+ OrgReg (ST\STM32F10x\)
  TgStat=16
  OutDir (.\)
  OutName (RTOSDemo)
@@ -88,9 +90,9 @@ Options 1,0,0  // Target 'Target 1'
  ADSTFLGA { 0,12,0,18,99,0,0,66,0,0,0,0,0,0,0,0,0,0,0,0 }
  OCMADSOCM { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
  OCMADSIRAM { 0,0,0,0,32,0,80,0,0 }
- OCMADSIROM { 1,0,0,0,8,0,0,2,0 }
+ OCMADSIROM { 1,0,0,0,8,0,0,1,0 }
  OCMADSXRAM { 0,0,0,0,0,0,0,0,0 }
- OCR_RVCT { 1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,8,0,0,2,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,32,0,80,0,0,0,0,0,0,0,0,0,0,0 }
+ OCR_RVCT { 1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,8,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,32,0,80,0,0,0,0,0,0,0,0,0,0,0 }
  RV_STAVEC ()
  ADSCCFLG { 5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
  ADSCMISC ()
@@ -120,11 +122,11 @@ Options 1,0,0  // Target 'Target 1'
  ADSLDMC ()
  ADSLDIF ()
  ADSLDDW ()
-  OPTDL (SARMCM3.DLL)()(DARMSTM.DLL)(-pSTM32F103VB)(SARMCM3.DLL)()(TARMSTM.DLL)(-pSTM32F103VB)
-  OPTDBG 42998,1,()()()()()()()()()() (BIN\UL2CM3.DLL)()()()
- FLASH1 { 9,0,0,0,1,0,0,0,1,16,0,0,0,0,0,0,0,0,0,0 }
- FLASH2 (BIN\UL2CM3.DLL)
- FLASH3 ("" ())
+  OPTDL (SARMCM3.DLL)()(DARMSTM.DLL)(-pSTM32F103C8)(SARMCM3.DLL)()(TARMSTM.DLL)(-pSTM32F103C8)
+  OPTDBG 42998,13,()()()()()()()()()() (STLink\ST-LINKIII-KEIL_SWO.dll)()()()
+ FLASH1 { 9,0,0,0,1,0,0,0,8,16,0,0,0,0,0,0,0,0,0,0 }
+ FLASH2 (STLink\ST-LINKIII-KEIL_SWO.dll)
+ FLASH3 ()
  FLASH4 ()
 EndOpt
 

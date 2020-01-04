@@ -171,14 +171,15 @@ QueueHandle_t xLCDQueue;
 
 /*-----------------------------------------------------------*/
 
+extern void vUARTCommandConsoleStart( uint16_t usStackSize, UBaseType_t uxPriority );
 int main( void )
 {
 #ifdef DEBUG
   debug();
 #endif
-
-	prvSetupHardware();
-
+    prvSetupHardware();
+    vUARTCommandConsoleStart(configMINIMAL_STACK_SIZE, 1);
+#if 0
 	/* Create the queue used by the LCD task.  Messages for display on the LCD
 	are received via this queue. */
 	xLCDQueue = xQueueCreate( mainLCD_QUEUE_SIZE, sizeof( xLCDMessage ) );
@@ -203,7 +204,7 @@ int main( void )
 
 	/* Configure the timers used by the fast interrupt timer test. */
 	vSetupTimerTest();
-
+#endif
 	/* Start the scheduler. */
 	vTaskStartScheduler();
 
@@ -377,7 +378,7 @@ GPIO_InitTypeDef GPIO_InitStructure;
 	LCD_Clear();
 }
 /*-----------------------------------------------------------*/
-
+#if 0
 int fputc( int ch, FILE *f )
 {
 static unsigned short usColumn = 0, usRefColumn = mainCOLUMN_START;
@@ -421,6 +422,7 @@ static unsigned char ucLine = 0;
 
 	return ch;
 }
+#endif
 /*-----------------------------------------------------------*/
 
 #ifdef  DEBUG
