@@ -59,6 +59,8 @@
 
 /* Standard includes. */
 #include <stdio.h>
+#include <string.h>
+#include <stdint.h>
 
 /* Scheduler includes. */
 #include "FreeRTOS.h"
@@ -80,6 +82,7 @@
 #include "PollQ.h"
 #include "flash.h"
 #include "comtest2.h"
+#include "FreeRTOS_CLI.h"
 
 /* Task priorities. */
 #define mainQUEUE_POLL_PRIORITY				( tskIDLE_PRIORITY + 2 )
@@ -171,6 +174,30 @@ QueueHandle_t xLCDQueue;
 
 /*-----------------------------------------------------------*/
 
+/*++++++++++++++ register cmd++++++++++++++++++++++ */
+static BaseType_t prvPrintCommand( char *pcWriteBuffer, size_t xWriteBufferLen, const char *pcCommandString )
+{
+
+	( void ) pcCommandString;
+
+	/* Return the next command help string, before moving the pointer on to
+	the next command in the list. */
+	strncpy( pcWriteBuffer, "I love GW!", xWriteBufferLen );
+
+	return pdFALSE;
+}
+
+static const CLI_Command_Definition_t xPrintCommand =
+{
+	"print",
+	"\r\nprint:\r\n Print out \"I love GW!\"\r\n\r\n",
+	prvPrintCommand,
+	0
+};
+
+
+/*-------------------register cmd-----------------------------*/
+
 extern void vUARTCommandConsoleStart( uint16_t usStackSize, UBaseType_t uxPriority );
 int main( void )
 {
@@ -179,6 +206,7 @@ int main( void )
 #endif
     prvSetupHardware();
     vUARTCommandConsoleStart(configMINIMAL_STACK_SIZE, 1);
+    FreeRTOS_CLIRegisterCommand(&xPrintCommand);
 #if 0
 	/* Create the queue used by the LCD task.  Messages for display on the LCD
 	are received via this queue. */
