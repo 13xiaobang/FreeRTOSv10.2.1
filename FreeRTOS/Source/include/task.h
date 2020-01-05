@@ -143,7 +143,10 @@ typedef struct xTASK_STATUS
 	UBaseType_t uxCurrentPriority;	/* The priority at which the task was running (may be inherited) when the structure was populated. */
 	UBaseType_t uxBasePriority;		/* The priority to which the task will return if the task's current priority has been inherited to avoid unbounded priority inversion when obtaining a mutex.  Only valid if configUSE_MUTEXES is defined as 1 in FreeRTOSConfig.h. */
 	uint32_t ulRunTimeCounter;		/* The total run time allocated to the task so far, as defined by the run time stats clock.  See http://www.freertos.org/rtos-run-time-stats.html.  Only valid when configGENERATE_RUN_TIME_STATS is defined as 1 in FreeRTOSConfig.h. */
-	StackType_t *pxStackBase;		/* Points to the lowest address of the task's stack area. */
+ #if ( configGENERATE_RUN_TIME_STATS == 1 )
+	uint32_t ulDelataRunTimeCounterOfPeroid;/* The delta run time counter in a sample peroid*/
+#endif
+        StackType_t *pxStackBase;		/* Points to the lowest address of the task's stack area. */
 	configSTACK_DEPTH_TYPE usStackHighWaterMark;	/* The minimum amount of stack space that has remained for the task since the task was created.  The closer this value is to zero the closer the task has come to overflowing its stack. */
 } TaskStatus_t;
 
@@ -969,7 +972,6 @@ eTaskState eTaskGetState( TaskHandle_t xTask ) PRIVILEGED_FUNCTION;
  * \ingroup TaskCtrl
  */
 void vTaskGetInfo( TaskHandle_t xTask, TaskStatus_t *pxTaskStatus, BaseType_t xGetFreeStackSpace, eTaskState eState ) PRIVILEGED_FUNCTION;
-
 /**
  * task. h
  * <pre>void vTaskPrioritySet( TaskHandle_t xTask, UBaseType_t uxNewPriority );</pre>

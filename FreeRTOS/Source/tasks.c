@@ -291,6 +291,8 @@ typedef struct tskTaskControlBlock 			/* The old naming convention is used to pr
 
 	#if( configGENERATE_RUN_TIME_STATS == 1 )
 		uint32_t		ulRunTimeCounter;	/*< Stores the amount of time the task has spent in the Running state. */
+                uint32_t		ulStartRunTimeCounterOfPeroid;	/*< Stores the amount of time the task has spent in the Running state during a peroid start. */
+		uint32_t		ulEndRunTimeCounterOfPeroid;	/*< Stores the amount of time the task has spent in the Running state when a peroid end */
 	#endif
 
 	#if ( configUSE_NEWLIB_REENTRANT == 1 )
@@ -365,7 +367,7 @@ the errno of the currently running task. */
 
 /* Other file private variables. --------------------------------*/
 PRIVILEGED_DATA static volatile UBaseType_t uxCurrentNumberOfTasks 	= ( UBaseType_t ) 0U;
-PRIVILEGED_DATA static volatile TickType_t xTickCount 				= ( TickType_t ) configINITIAL_TICK_COUNT;
+PRIVILEGED_DATA volatile TickType_t xTickCount 				= ( TickType_t ) configINITIAL_TICK_COUNT;
 PRIVILEGED_DATA static volatile UBaseType_t uxTopReadyPriority 		= tskIDLE_PRIORITY;
 PRIVILEGED_DATA static volatile BaseType_t xSchedulerRunning 		= pdFALSE;
 PRIVILEGED_DATA static volatile UBaseType_t uxPendedTicks 			= ( UBaseType_t ) 0U;
@@ -391,7 +393,7 @@ PRIVILEGED_DATA static volatile UBaseType_t uxSchedulerSuspended	= ( UBaseType_t
 	code working with debuggers that need to remove the static qualifier. */
 	PRIVILEGED_DATA static uint32_t ulTaskSwitchedInTime = 0UL;	/*< Holds the value of a timer/counter the last time a task was switched in. */
 	PRIVILEGED_DATA static uint32_t ulTotalRunTime = 0UL;		/*< Holds the total amount of execution time as defined by the run time counter clock. */
-
+        PRIVILEGED_DATA static uint32_t ulDeltaTotalRunTime = 0UL;		/*< Holds the delta total amount of execution time*/
 #endif
 
 /*lint -restore */
@@ -961,6 +963,8 @@ UBaseType_t x;
 	#if ( configGENERATE_RUN_TIME_STATS == 1 )
 	{
 		pxNewTCB->ulRunTimeCounter = 0UL;
+                pxNewTCB->ulStartRunTimeCounterOfPeroid = 0UL;
+		pxNewTCB->ulEndRunTimeCounterOfPeroid = 0UL;
 	}
 	#endif /* configGENERATE_RUN_TIME_STATS */
 
@@ -2488,6 +2492,10 @@ TCB_t *pxTCB;
 
 		vTaskSuspendAll();
 		{
+                        /* Is there a space in the array for each task in the system? */
+#if ( configGENERATE_RUN_TIME_STATS == 1 )
+			ulDeltaTotalRunTime = 0;
+#endif
 			/* Is there a space in the array for each task in the system? */
 			if( uxArraySize >= uxCurrentNumberOfTasks )
 			{
@@ -2661,6 +2669,76 @@ implementations require configUSE_TICKLESS_IDLE to be set to a value other than
 
 #endif /* INCLUDE_xTaskAbortDelay */
 /*----------------------------------------------------------*/
+#if ( ( configGENERATE_RUN_TIME_STATS == 1 ) && ( configUSE_STATS_FORMATTING_FUNCTIONS == 1 ) )
+	static void prvGenerateRunTimeOfPeroid(xList *pxList, portTickType tickTmp)
+	{
+		volatile tskTCB *pxNextTCB, *pxFirstTCB;
+
+		/* Write the run time stats of all the TCB's in pxList into the buffer. */
+		listGET_OWNER_OF_NEXT_ENTRY( pxFirstTCB, pxList );
+		do
+		{
+			/* Get next TCB in from the list. */
+			listGET_OWNER_OF_NEXT_ENTRY( pxNextTCB, pxList );
+
+			/* Record start&end run time counter. */
+			if (tickTmp%(2*portCONFIGURE_STATS_PEROID_VALUE))
+				pxNextTCB->ulStartRunTimeCounterOfPeroid = pxNextTCB->ulRunTimeCounter;
+			else
+				pxNextTCB->ulEndRunTimeCounterOfPeroid = pxNextTCB->ulRunTimeCounter;
+
+		} while( pxNextTCB != pxFirstTCB );
+	}
+
+	static void prvGetRunTimeStatsOfPeroidForTasksInList(portTickType tickTmp)
+	{
+		unsigned portBASE_TYPE uxQueue;
+
+		if (tickTmp%portCONFIGURE_STATS_PEROID_VALUE){
+			return;//only portCONFIGURE_STATS_PEROID_VALUE
+		}
+
+		uxQueue = configMAX_PRIORITIES;
+
+		do
+		{
+			uxQueue--;
+
+			if( listLIST_IS_EMPTY( &( pxReadyTasksLists[ uxQueue ] ) ) == pdFALSE )
+			{
+				prvGenerateRunTimeOfPeroid(( xList * ) &( pxReadyTasksLists[ uxQueue ] ), tickTmp );
+			}
+		}while( uxQueue > ( UBaseType_t ) tskIDLE_PRIORITY );
+
+		if( listLIST_IS_EMPTY( pxDelayedTaskList ) == pdFALSE )
+		{
+			prvGenerateRunTimeOfPeroid(( xList * ) pxDelayedTaskList, tickTmp );
+		}
+
+		if( listLIST_IS_EMPTY( pxOverflowDelayedTaskList ) == pdFALSE )
+		{
+			prvGenerateRunTimeOfPeroid(( xList * ) pxOverflowDelayedTaskList, tickTmp );
+		}
+
+#if ( INCLUDE_vTaskDelete == 1 )
+		{
+			if( listLIST_IS_EMPTY( &xTasksWaitingTermination ) == pdFALSE )
+			{
+				prvGenerateRunTimeOfPeroid(&xTasksWaitingTermination, tickTmp );
+			}
+		}
+#endif
+
+#if ( INCLUDE_vTaskSuspend == 1 )
+		{
+			if( listLIST_IS_EMPTY( &xSuspendedTaskList ) == pdFALSE )
+			{
+				prvGenerateRunTimeOfPeroid(&xSuspendedTaskList, tickTmp );
+			}
+		}
+#endif
+	}
+#endif
 
 BaseType_t xTaskIncrementTick( void )
 {
@@ -2816,7 +2894,9 @@ BaseType_t xSwitchRequired = pdFALSE;
 		}
 		#endif
 	}
-
+	#if ( configGENERATE_RUN_TIME_STATS == 1 )
+	        prvGetRunTimeStatsOfPeroidForTasksInList(xTickCount);
+	#endif
 	#if ( configUSE_PREEMPTION == 1 )
 	{
 		if( xYieldPending != pdFALSE )
@@ -3605,11 +3685,10 @@ static void prvCheckTasksWaitingTermination( void )
 /*-----------------------------------------------------------*/
 
 #if( configUSE_TRACE_FACILITY == 1 )
-
 	void vTaskGetInfo( TaskHandle_t xTask, TaskStatus_t *pxTaskStatus, BaseType_t xGetFreeStackSpace, eTaskState eState )
 	{
 	TCB_t *pxTCB;
-
+        TCB_t * pxNextTCB = xTask;
 		/* xTask is NULL then get the state of the calling task. */
 		pxTCB = prvGetTCBFromHandle( xTask );
 
@@ -3632,6 +3711,11 @@ static void prvCheckTasksWaitingTermination( void )
 		#if ( configGENERATE_RUN_TIME_STATS == 1 )
 		{
 			pxTaskStatus->ulRunTimeCounter = pxTCB->ulRunTimeCounter;
+			if (pxNextTCB->ulEndRunTimeCounterOfPeroid > pxNextTCB->ulStartRunTimeCounterOfPeroid)
+                                pxTaskStatus->ulDelataRunTimeCounterOfPeroid = pxNextTCB->ulEndRunTimeCounterOfPeroid - pxNextTCB->ulStartRunTimeCounterOfPeroid;
+			else
+				pxTaskStatus->ulDelataRunTimeCounterOfPeroid = pxNextTCB->ulStartRunTimeCounterOfPeroid - pxNextTCB->ulEndRunTimeCounterOfPeroid;
+			ulDeltaTotalRunTime += pxTaskStatus->ulDelataRunTimeCounterOfPeroid;
 		}
 		#else
 		{

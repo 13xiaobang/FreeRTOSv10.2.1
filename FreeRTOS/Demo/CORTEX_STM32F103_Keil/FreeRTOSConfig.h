@@ -49,7 +49,7 @@
 #define configMINIMAL_STACK_SIZE	( ( unsigned short ) 128 )
 #define configTOTAL_HEAP_SIZE		( ( size_t ) ( 17 * 1024 ) )
 #define configMAX_TASK_NAME_LEN		( 16 )
-#define configUSE_TRACE_FACILITY	0
+#define configUSE_TRACE_FACILITY	1
 #define configUSE_16_BIT_TICKS		0
 #define configIDLE_SHOULD_YIELD		1
 
@@ -86,5 +86,18 @@ NVIC value of 255. */
 #define configUSE_MUTEXES 1
 #define configAPPLICATION_PROVIDES_cOutputBuffer 1
 
+#if 1
+#define configGENERATE_RUN_TIME_STATS 1
+#define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS() 
+#define portGET_RUN_TIME_COUNTER_VALUE()  xTickCount
+//( * ( ( volatile uint32_t * ) 0xe000e018 ) )                           //portNVIC_SYSTICK_CURRENT_VALUE_REG
+#define configUSE_STATS_FORMATTING_FUNCTIONS 1
+#ifdef CONFIG_FREERTOS_CONFIGURE_STATS_PEROID_VALUE
+#define portCONFIGURE_STATS_PEROID_VALUE        CONFIG_FREERTOS_CONFIGURE_STATS_PEROID_VALUE // unit ticks
+#else
+#define portCONFIGURE_STATS_PEROID_VALUE        100 // unit ticks
+#endif
+
+#endif
 #endif /* FREERTOS_CONFIG_H */
 

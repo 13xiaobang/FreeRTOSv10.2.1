@@ -175,6 +175,82 @@ QueueHandle_t xLCDQueue;
 /*-----------------------------------------------------------*/
 
 /*++++++++++++++ register cmd++++++++++++++++++++++ */
+#if 1
+static const char *s_task_status[] = {"R", /*eRunning = 0*/
+	"W", /*eReady*/
+	"B", /*eBlocked*/
+	"S", /*eSuspended*/
+	"D", /*eDeleted*/
+};
+
+#define portNUM_PROCESSORS 1
+static void print_current_tasks_status()
+{
+	/*printf("current available memory, psram:%u, internal:%u\n",
+			heap_caps_get_free_size(MALLOC_CAP_SPIRAM),
+			heap_caps_get_free_size(MALLOC_CAP_INTERNAL));*/
+#if (configGENERATE_RUN_TIME_STATS == 1)
+	TaskStatus_t *p_xtask_status_array = NULL;
+	volatile UBaseType_t ux_array_size = 0, x = 0;
+	uint32_t ul_total_runtime = 0;
+	double f_stats_as_percentage = 0;
+	double f_total_runtime = 0;
+
+	// Take a snapshot of the number of tasks in case it changes while this
+	// function is executing.
+	ux_array_size = uxTaskGetNumberOfTasks();
+
+	// Allocate a TaskStatus_t structure for each task.  An array could be
+	// allocated statically at compile time.
+	p_xtask_status_array = pvPortMalloc(ux_array_size * sizeof(TaskStatus_t));
+	//printf("p_xtask_status_array:%p, ux_array_size:%d\n", p_xtask_status_array, ux_array_size);
+	if (p_xtask_status_array != NULL) {
+		// Generate raw status information about each task.
+		ux_array_size = uxTaskGetSystemState(
+				p_xtask_status_array, ux_array_size, &ul_total_runtime);
+
+		printf("ul_total_runtime:%u, ux_array_size:%u\r\n", ul_total_runtime, ux_array_size);
+		// For percentage calculations.
+		f_total_runtime = 0;
+		for (x = 0; x < ux_array_size; x++) {
+			f_total_runtime += p_xtask_status_array[x].ulDelataRunTimeCounterOfPeroid;
+		}
+		if (f_total_runtime > 0) {
+			//header
+			printf("%8s  %-16s  %5s  %2s  %4s  %4s  %6s \r\n",
+					"Handle", "task_name", "STACK", "P", " S ", "   CPU", " Num");
+
+			// For each populated position in the p_xtask_status_array array,
+			// format the raw data as human readable ASCII data
+			for (x = 0; x < ux_array_size; x++) {
+				// What percentage of the total run time has the task used?
+				// This will always be rounded down to the nearest integer.
+				f_stats_as_percentage =
+					(100 * p_xtask_status_array[x].ulDelataRunTimeCounterOfPeroid)
+					/ (f_total_runtime / portNUM_PROCESSORS);
+				// If the percentage is zero here then the task has
+				// consumed less than 1% of the total run time.
+				printf("%8x  %-16s  %5u  %2u  %1d(%1s)   %5.2f%%   0x%02x\r\n",
+						(uint32_t)p_xtask_status_array[x].xHandle,
+						p_xtask_status_array[x].pcTaskName,
+						p_xtask_status_array[x].usStackHighWaterMark,
+						p_xtask_status_array[x].uxCurrentPriority,
+						p_xtask_status_array[x].eCurrentState,
+						s_task_status[p_xtask_status_array[x].eCurrentState],
+						f_stats_as_percentage,
+						p_xtask_status_array[x].xTaskNumber);
+			}
+		}
+
+		// The array is no longer needed, free the memory it consumes.
+		vPortFree(p_xtask_status_array);
+	}
+#else
+	printf("not support, more info reference to configGENERATE_RUN_TIME_STATS!!\r\n");
+#endif
+}
+#endif
+
 static BaseType_t prvPrintCommand( char *pcWriteBuffer, size_t xWriteBufferLen, const char *pcCommandString )
 {
 
@@ -183,7 +259,15 @@ static BaseType_t prvPrintCommand( char *pcWriteBuffer, size_t xWriteBufferLen, 
 	/* Return the next command help string, before moving the pointer on to
 	the next command in the list. */
 	strncpy( pcWriteBuffer, "I love GW!", xWriteBufferLen );
+        printf("I am ZHF.\r\n");
+	return pdFALSE;
+}
 
+static BaseType_t prvTaskStatusCommand( char *pcWriteBuffer, size_t xWriteBufferLen, const char *pcCommandString )
+{
+	( void ) pcCommandString;
+        print_current_tasks_status();
+        pcWriteBuffer[0] = '\0';
 	return pdFALSE;
 }
 
@@ -195,8 +279,59 @@ static const CLI_Command_Definition_t xPrintCommand =
 	0
 };
 
+static const CLI_Command_Definition_t xTaskstatusCommand =
+{
+	"stat",
+	"\r\stat:\r\n Print out task status.\r\n\r\n",
+	prvTaskStatusCommand,
+	0
+};
 
 /*-------------------register cmd-----------------------------*/
+volatile int a = 0;
+void vTEST1Task( void *pvParameters )
+{
+	/* Initialise the LCD and display a startup message. */
+	//prvConfigureLCD();
+	//LCD_DrawMonoPict( ( unsigned long * ) pcBitmap );
+        volatile int i = 0;
+	for( ;; )
+	{
+		/* Wait for a message to arrive that requires displaying. */
+		//while( xQueueReceive( xLCDQueue, &xMessage, portMAX_DELAY ) != pdPASS );
+		/* Display the message.  Print each message to a different position. */
+                //if(a==0)
+		//    {
+                        for(i = 0; i< 1000; i++);
+                //        a =1;
+                 //   }
+                //else
+                    portYIELD();
+	}
+}
+#define portNVIC_SYSTICK_CURRENT_VALUE_REG	( * ( ( volatile uint32_t * ) 0xe000e018 ) )
+
+extern PRIVILEGED_DATA volatile TickType_t xTickCount;
+void vTEST2Task( void *pvParameters )
+{
+	/* Initialise the LCD and display a startup message. */
+	//prvConfigureLCD();
+	//LCD_DrawMonoPict( ( unsigned long * ) pcBitmap );
+        volatile int i = 0;
+	for( ;; )
+	{
+		/* Wait for a message to arrive that requires displaying. */
+		//while( xQueueReceive( xLCDQueue, &xMessage, portMAX_DELAY ) != pdPASS );
+		/* Display the message.  Print each message to a different position. */
+                //if(a==1)
+		 //   {
+                        for(i = 0; i< 10000; i++);
+               //         a =0;
+               //     }
+               // else
+                    portYIELD();
+	}
+}
 
 extern void vUARTCommandConsoleStart( uint16_t usStackSize, UBaseType_t uxPriority );
 int main( void )
@@ -205,8 +340,14 @@ int main( void )
   debug();
 #endif
     prvSetupHardware();
-    vUARTCommandConsoleStart(configMINIMAL_STACK_SIZE, 1);
+    vUARTCommandConsoleStart(configMINIMAL_STACK_SIZE, tskIDLE_PRIORITY+2);
     FreeRTOS_CLIRegisterCommand(&xPrintCommand);
+    FreeRTOS_CLIRegisterCommand(&xTaskstatusCommand);
+    //vAltStartComTestTasks( mainCOM_TEST_PRIORITY, mainCOM_TEST_BAUD_RATE, mainCOM_TEST_LED );
+    //printf("start test!\r\n");
+
+   xTaskCreate( vTEST1Task, "TEST1", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY+1, NULL );
+    xTaskCreate( vTEST2Task, "TEST2", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY+1, NULL );
 #if 0
 	/* Create the queue used by the LCD task.  Messages for display on the LCD
 	are received via this queue. */
@@ -219,7 +360,7 @@ int main( void )
     vStartPolledQueueTasks( mainQUEUE_POLL_PRIORITY );
     vStartIntegerMathTasks( mainINTEGER_TASK_PRIORITY );
 	vStartLEDFlashTasks( mainFLASH_TASK_PRIORITY );
-	vAltStartComTestTasks( mainCOM_TEST_PRIORITY, mainCOM_TEST_BAUD_RATE, mainCOM_TEST_LED );
+	//vAltStartComTestTasks( mainCOM_TEST_PRIORITY, mainCOM_TEST_BAUD_RATE, mainCOM_TEST_LED );
 
 	/* Start the tasks defined within this file/specific to this demo. */
     xTaskCreate( vCheckTask, "Check", mainCHECK_TASK_STACK_SIZE, NULL, mainCHECK_TASK_PRIORITY, NULL );
@@ -406,6 +547,12 @@ GPIO_InitTypeDef GPIO_InitStructure;
 	LCD_Clear();
 }
 /*-----------------------------------------------------------*/
+int fputc( int ch, FILE *f )
+{
+    xSerialPutChar( NULL, ch, 0 );
+    return ch;
+}
+
 #if 0
 int fputc( int ch, FILE *f )
 {

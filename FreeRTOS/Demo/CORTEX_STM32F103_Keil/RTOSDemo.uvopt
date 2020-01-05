@@ -145,7 +145,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>DLGTARM</Key>
-          <Name>(1010=-1,-1,-1,-1,0)(1007=-1,-1,-1,-1,0)(1008=-1,-1,-1,-1,0)(1009=-1,-1,-1,-1,0)(100=-1,-1,-1,-1,0)(110=-1,-1,-1,-1,0)(111=-1,-1,-1,-1,0)(1011=-1,-1,-1,-1,0)(180=-1,-1,-1,-1,0)(120=-1,-1,-1,-1,0)(121=-1,-1,-1,-1,0)(122=-1,-1,-1,-1,0)(123=-1,-1,-1,-1,0)(124=-1,-1,-1,-1,0)(140=-1,-1,-1,-1,0)(240=-1,-1,-1,-1,0)(190=-1,-1,-1,-1,0)(200=-1,-1,-1,-1,0)(170=-1,-1,-1,-1,0)(130=-1,-1,-1,-1,0)(131=-1,-1,-1,-1,0)(132=-1,-1,-1,-1,0)(133=-1,-1,-1,-1,0)(160=-1,-1,-1,-1,0)(161=-1,-1,-1,-1,0)(162=-1,-1,-1,-1,0)(210=-1,-1,-1,-1,0)(211=-1,-1,-1,-1,0)(220=-1,-1,-1,-1,0)(221=-1,-1,-1,-1,0)(230=-1,-1,-1,-1,0)(231=-1,-1,-1,-1,0)(232=-1,-1,-1,-1,0)(233=-1,-1,-1,-1,0)(150=-1,-1,-1,-1,0)(151=-1,-1,-1,-1,0)</Name>
+          <Name>(1010=-1,-1,-1,-1,0)(1007=-1,-1,-1,-1,0)(1008=-1,-1,-1,-1,0)(1009=-1,-1,-1,-1,0)(100=-1,-1,-1,-1,0)(110=-1,-1,-1,-1,0)(111=-1,-1,-1,-1,0)(1011=-1,-1,-1,-1,0)(180=-1,-1,-1,-1,0)(120=-1,-1,-1,-1,0)(121=-1,-1,-1,-1,0)(122=-1,-1,-1,-1,0)(123=-1,-1,-1,-1,0)(140=-1,-1,-1,-1,0)(240=-1,-1,-1,-1,0)(190=-1,-1,-1,-1,0)(200=-1,-1,-1,-1,0)(170=-1,-1,-1,-1,0)(130=-1,-1,-1,-1,0)(131=-1,-1,-1,-1,0)(132=-1,-1,-1,-1,0)(133=-1,-1,-1,-1,0)(160=-1,-1,-1,-1,0)(161=-1,-1,-1,-1,0)(162=-1,-1,-1,-1,0)(210=-1,-1,-1,-1,0)(211=-1,-1,-1,-1,0)(220=-1,-1,-1,-1,0)(221=-1,-1,-1,-1,0)(230=-1,-1,-1,-1,0)(231=-1,-1,-1,-1,0)(232=-1,-1,-1,-1,0)(233=-1,-1,-1,-1,0)(150=-1,-1,-1,-1,0)(151=-1,-1,-1,-1,0)</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -177,64 +177,20 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>165</LineNumber>
+          <LineNumber>181</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134240790</Address>
+          <Address>0</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>F:\freertos\FreeRTOSv10.2.1\FreeRTOSv10.2.1\FreeRTOS\Demo\CORTEX_STM32F103_Keil\FreeRTOS_CLI.c</Filename>
+          <BreakIfRCount>0</BreakIfRCount>
+          <Filename>F:\freertos\FreeRTOSv10.2.1\FreeRTOSv10.2.1\FreeRTOS\Demo\Common\Minimal\comtest.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\RTOSDemo\FreeRTOS_CLI.c\165</Expression>
-        </Bp>
-        <Bp>
-          <Number>1</Number>
-          <Type>0</Type>
-          <LineNumber>162</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134227934</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>F:\freertos\FreeRTOSv10.2.1\FreeRTOSv10.2.1\FreeRTOS\Demo\CORTEX_STM32F103_Keil\serial\serial.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\RTOSDemo\serial/serial.c\162</Expression>
-        </Bp>
-        <Bp>
-          <Number>2</Number>
-          <Type>0</Type>
-          <LineNumber>167</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134227956</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>F:\freertos\FreeRTOSv10.2.1\FreeRTOSv10.2.1\FreeRTOS\Demo\CORTEX_STM32F103_Keil\serial\serial.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\RTOSDemo\serial/serial.c\167</Expression>
+          <Expression></Expression>
         </Bp>
       </Breakpoint>
-      <WatchWindow1>
-        <Ww>
-          <count>0</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>pcWriteBuffer[20]</ItemText>
-        </Ww>
-        <Ww>
-          <count>1</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>*pxNext</ItemText>
-        </Ww>
-      </WatchWindow1>
       <DebugFlag>
         <trace>0</trace>
         <periodic>1</periodic>
@@ -283,7 +239,7 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>111</TopLine>
+      <TopLine>118</TopLine>
       <CurrentLine>122</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\STM32F10x.s</PathWithFileName>
@@ -515,8 +471,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>243</TopLine>
-      <CurrentLine>265</CurrentLine>
+      <TopLine>1</TopLine>
+      <CurrentLine>1</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\main.c</PathWithFileName>
       <FilenameWithoutPath>main.c</FilenameWithoutPath>
@@ -614,8 +570,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>174</TopLine>
+      <CurrentLine>182</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\Common\Minimal\comtest.c</PathWithFileName>
       <FilenameWithoutPath>comtest.c</FilenameWithoutPath>
@@ -734,8 +690,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>1</TopLine>
+      <CurrentLine>1</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\Source\tasks.c</PathWithFileName>
       <FilenameWithoutPath>tasks.c</FilenameWithoutPath>
@@ -798,8 +754,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>180</TopLine>
+      <CurrentLine>193</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\Source\portable\MemMang\heap_2.c</PathWithFileName>
       <FilenameWithoutPath>heap_2.c</FilenameWithoutPath>
